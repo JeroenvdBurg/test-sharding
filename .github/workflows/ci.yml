@@ -25,7 +25,7 @@ jobs:
         run: pnpm i
 
       - name: Run tests
-        run: pnpm run test --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm run test --reporter=blob --coverage --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
@@ -34,6 +34,14 @@ jobs:
           name: blob-report-${{ matrix.shardIndex }}
           path: .vitest-reports/*
           include-hidden-files: true
+          retention-days: 1
+
+      - name: Upload coverage to GitHub Actions Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.shardIndex }}
+          path: coverage/*
           retention-days: 1
 
   merge-reports:
@@ -68,3 +76,18 @@ jobs:
 
       - name: Merge reports
         run: npx vitest --merge-reports
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: coverage
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Merge coverage reports
+        run: |
+          npx nyc merge ./coverage ./coverage/merged-coverage.json
+
+      - name: Check coverage thresholds
+        run: |
+          npx nyc check-coverage --lines 80 --functions 80 --branches 80 --statements 80 --reporter=text-summary ./coverage/merged-coverage.json

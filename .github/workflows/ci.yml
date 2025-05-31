@@ -87,10 +87,7 @@ jobs:
       - name: Merge coverage reports
         run: npx nyc merge ./coverage ./coverage/merged-coverage.json
 
-      - name: Generate coverage report from merged file
-        run: npx nyc report --reporter=text-summary --report-dir=coverage --temp-dir=coverage --reporter=lcov
-
-      - name: Check coverage thresholds
-        run: npx nyc check-coverage --lines 80 --functions 80 --branches 80 --statements 80
+      - name: Generate coverage report and check thresholds
+        run: npx nyc report --reporter=text-summary --report-dir=coverage --temp-dir=coverage --reporter=lcov --check-coverage --lines 80 --functions 80 --branches 80 --statements 80
 
 

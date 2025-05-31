@@ -85,8 +85,7 @@ jobs:
           merge-multiple: true
 
       - name: Merge coverage reports
-        run: |
-          npx vitest --merge-coverage
+        run: npx vitest coverage merge
 
       - name: Generate coverage report from merged file
         run: npx nyc report --reporter=text-summary --report-dir=coverage --temp-dir=coverage

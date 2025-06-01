@@ -69,7 +69,7 @@ jobs:
           ls -la .vitest-reports/*
 
       - name: Merge reports
-        run: npx vitest --merge-reports -reporter=default --reporter=junit --outputFile=test-results/junit.xml
+        run: npx vitest --merge-reports
         env:
           CI_SKIP_COVERAGE_THRESHOLDS: "false"
 
